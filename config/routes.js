@@ -37,6 +37,7 @@ module.exports.routes = {
   },
   'post /auth/signup': 'AuthController.postSignup',
   'post /auth/login': 'AuthController.postLogin',
+  'post /auth/fblogin': 'AuthController.postFacebookLogin',
   'get /list/fetch/:id': 'ListController.fetch'
 
   /***************************************************************************
