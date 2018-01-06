@@ -52,7 +52,7 @@ module.exports = {
                 }).then((user)=> {
                     if(user){
                         const jwt_token = auth.sign(user.id);
-                        return res.json({token: jwt_token});
+                        return res.json({token: jwt_token, user: user});
                     }
         
                     User.create({"email": user_data.email, name: `${user_data.first_name} ${user_data.last_name}`}).then((user)=> {
