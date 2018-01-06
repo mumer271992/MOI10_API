@@ -14,7 +14,8 @@ module.exports = {
 
             User.create(user_data).then((user)=> {
                 const jwt_token = auth.sign(user.id);
-                return res.json({token: jwt_token});
+                delete user.password;
+                return res.json({token: jwt_token, user: user});
             }).catch((err)=> {
                 res.status(500).send({error: err});
             });
@@ -32,7 +33,8 @@ module.exports = {
             }
 
             const jwt_token = auth.sign(user.id);
-            return res.json({token: jwt_token});
+            delete user.password;
+            return res.json({token: jwt_token, user: user});
         });
     },
     postFacebookLogin: (req, res) => {
@@ -55,7 +57,7 @@ module.exports = {
         
                     User.create({"email": user_data.email, name: `${user_data.first_name} ${user_data.last_name}`}).then((user)=> {
                         const jwt_token = auth.sign(user.id);
-                        return res.json({token: jwt_token});
+                        return res.json({token: jwt_token, user: user});
                     }).catch((err)=> {
                         res.status(500).send({error: err});
                     });

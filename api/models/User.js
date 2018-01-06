@@ -19,6 +19,11 @@ module.exports = {
     password: {
       type: 'string',
       required: false
+    },
+    my_votes: {
+      collection: 'listitem',
+      via: 'item_id',
+      through: 'useritems'
     }
   }
 };

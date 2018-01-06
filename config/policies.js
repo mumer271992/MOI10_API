@@ -58,8 +58,9 @@ module.exports.policies = {
   },
   ListItemController: {
     '*': true,
-    create: ['sessionAuth'],
+    create: ['sessionAuth', 'mapOwner'],
     update: ['sessionAuth'],
-    destroy: ['sessionAuth']
+    destroy: ['sessionAuth'],
+    vote: ['sessionAuth', 'mapOwner']
   }
 };
