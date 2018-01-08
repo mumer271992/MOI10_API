@@ -21,7 +21,7 @@ module.exports = {
                 if(!item.votes){
                     item.votes = 0;
                 }
-                item.votes = item.votes + parseInt(req.body.vote);
+                item.votes = parseInt(item.votes) + parseInt(req.body.vote);
                 Useritems.findOne({
                     "user_id": req.body.user_id,
                     "item_id": req.body.item_id
@@ -46,7 +46,51 @@ module.exports = {
                         });
                     }
                     else{
-                        res.status(403).send({"error": "Already have voted this item"});
+                        console.log("Item already voted");
+                        //res.status(403).send({"error": "Already have voted this item"});
+
+                        if(parseInt(user_item.vote) !== (parseInt(req.body.vote))){
+                            console.log("Going to update vote");
+                            if(parseInt(user_item.vote) > parseInt(req.body.vote)){
+                                item.votes = parseInt(item.votes) - 1;
+                                console.log("user_item.vote > req.body.vote: -2", item.votes);
+                            }
+                            else if(parseInt(user_item.vote) < parseInt(req.body.vote)){
+                                item.votes = parseInt(item.votes) + 1;
+                                console.log("user_item.vote < req.body.vote: +2", item.votes);
+                            }
+                            user_item.vote = req.body.vote;
+                            item.save();
+                            user_item.save();
+                            res.status(200).send({"success": true});
+                        }
+                        else{
+                            console.log("Going to delete vote");
+                            if(parseInt(user_item.vote) > 0){
+                                item.votes = parseInt(item.votes) - 2;
+                                console.log("user_item.vote > 0: -1", item.votes);
+                            }
+                            else if(parseInt(user_item.vote) < 0){
+                                item.votes = parseInt(item.votes) + 2;
+                                console.log("user_item.vote < 0: +1", item.votes);
+                            }
+                            item.save();
+                            user_item.destroy();
+                            res.status(200).send({
+                                success: true
+                            });
+                            // user_item.destroy().exec((err) => {
+                            //     if(err){
+                            //         return res.status(500).send({
+                            //             error: "Item is not deleted"
+                            //         });
+                            //     }
+                            //     sails.log('The records for troublesome users (3 and 97) have been deleted, if they still existed.');
+                            //     res.status(200).send({
+                            //         success: true
+                            //     });
+                            // });
+                        }
                     }
                 }).catch((error)=> {
                     console.log("Error", error);
