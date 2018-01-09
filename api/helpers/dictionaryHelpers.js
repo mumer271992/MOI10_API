@@ -1,6 +1,7 @@
 module.exports = {
 
     wordFreq: function(string) {
+        string = string.toLowerCase();
         var words = string.replace(/[.]/g, '').split(/\s/);
         var freqMap = {};
         words.forEach(function(w) {
