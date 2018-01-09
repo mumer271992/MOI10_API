@@ -5,7 +5,21 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+var keywordsCalculator = require('../helpers/keywordsCalculator');
+
 module.exports = {
+    create: function(req, res){
+        var body = req.body;
+        List.create(body).then(function(new_list){
+            keywordsCalculator.maintainKeywordsListFromList(new_list.id, function(wordsMap){
+                new_list.words_list = wordsMap;
+                new_list.save();
+                res.status(200).json(new_list);
+            });
+        }).catch(function(err){
+            res.status(500).send({error: err});
+        });
+    },
 	fetch: function(req, res){
         // var data;
         

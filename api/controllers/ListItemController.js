@@ -4,8 +4,42 @@
  * @description :: Server-side logic for managing listitems
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
+var keywordsCalculator = require('../helpers/keywordsCalculator');
 
 module.exports = {
+    create: function(req, res){
+        var body = req.body;
+        ListItem.create(body).then(function(new_item){
+            keywordsCalculator.maintainKeywordsListFromListItem(new_item.id, function(wordsMap){
+                List.findOne({
+                    id: new_item.list_id
+                }).then(function(list){
+                    var existingWordsMap = list.words_list;
+                    var keysOfExistingMap = Object.keys(existingWordsMap);
+                    var keysOfWordsMap = Object.keys(wordsMap);
+                    for(let i = 0; i < keysOfWordsMap.length; i++){
+                        if(!existingWordsMap.hasOwnProperty(keysOfWordsMap[i])){
+                            existingWordsMap[keysOfWordsMap[i]] = wordsMap[keysOfWordsMap[i]];                            
+                        }
+                        else{
+                            existingWordsMap[keysOfWordsMap[i]] += wordsMap[keysOfWordsMap[i]]; 
+                        }
+                    }
+
+                    list.words_list = existingWordsMap;
+                    list.save();
+                    res.status(200).json(new_item);
+                }).catch(function(err){
+                    res.status(500).send("Some internal error occured.");
+                });
+                new_list.words_list = wordsMap;
+                new_list.save();
+                res.status(200).json(new_list);
+            });
+        }).catch(function(err){
+            res.status(500).send({error: err});
+        });
+    },
     vote: (req, res) => {
         const item_id = req.body.item_id;
         //console.log(req);
