@@ -9,10 +9,11 @@ module.exports = {
             var wordsMap;
             var merged_content = list.name.concat(" " + list.description);
             wordsMap = dictionaryHelper.wordFreq(merged_content);
+            wordsMap = dictionaryHelper.calculateScoresOfWords(wordsMap);
             cb(wordsMap);
         })
         .catch(function(err){
-            console.log();
+            console.log(err);
         });
     },
     maintainKeywordsListFromListItem: function(item_id, cb){
@@ -26,7 +27,7 @@ module.exports = {
             cb(wordsMap);
         })
         .catch(function(err){
-            console.log();
+            console.log(err);
         });
     }
 }

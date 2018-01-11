@@ -6,14 +6,18 @@
  */
 
 var keywordsCalculator = require('../helpers/keywordsCalculator');
+var dictionaryHelpers = require('../helpers/dictionaryHelpers');
 
 module.exports = {
     create: function(req, res){
         var body = req.body;
         List.create(body).then(function(new_list){
+            console.log("List is created.");
             keywordsCalculator.maintainKeywordsListFromList(new_list.id, function(wordsMap){
+                console.log("Keywords List is maintained.");
                 new_list.words_list = wordsMap;
                 new_list.save();
+                dictionaryHelpers.convertWordsMapToDictionary(wordsMap);
                 res.status(200).json(new_list);
             });
         }).catch(function(err){

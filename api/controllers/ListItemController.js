@@ -5,6 +5,7 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 var keywordsCalculator = require('../helpers/keywordsCalculator');
+var dictionaryHelper = require('../helpers/dictionaryHelpers');
 
 module.exports = {
     create: function(req, res){
@@ -22,19 +23,18 @@ module.exports = {
                             existingWordsMap[keysOfWordsMap[i]] = wordsMap[keysOfWordsMap[i]];                            
                         }
                         else{
-                            existingWordsMap[keysOfWordsMap[i]] += wordsMap[keysOfWordsMap[i]]; 
+                            existingWordsMap[keysOfWordsMap[i]].count += wordsMap[keysOfWordsMap[i]].count; 
                         }
                     }
-
+                    existingWordsMap = dictionaryHelper.calculateScoresOfWords(existingWordsMap);
+                    dictionaryHelper.convertWordsMapToDictionary(wordsMap);
                     list.words_list = existingWordsMap;
                     list.save();
                     res.status(200).json(new_item);
                 }).catch(function(err){
+                    console.log(err);
                     res.status(500).send("Some internal error occured.");
                 });
-                new_list.words_list = wordsMap;
-                new_list.save();
-                res.status(200).json(new_list);
             });
         }).catch(function(err){
             res.status(500).send({error: err});

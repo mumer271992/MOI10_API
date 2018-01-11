@@ -5,6 +5,7 @@
   "description": "a Sails application",
   "keywords": [],
   "dependencies": {
+    "async-waterfall": "^0.1.5",
     "ejs": "2.3.4",
     "fb": "^2.0.0",
     "grunt": "1.0.1",
