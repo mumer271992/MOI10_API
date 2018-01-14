@@ -118,7 +118,7 @@ module.exports = {
                             let maxValueKey = maxValueWord.word;
 
                             scorePerCount = 100 / maxValueWord.count;
-                            console.log("Min Value factor: ", factor);
+                            console.log("Min Value factor: ", scorePerCount);
                             Dictionary.native(function(err, dictionary){
                                 if (err) return res.serverError(err);
                                 dictionary.find().forEach(function(item){

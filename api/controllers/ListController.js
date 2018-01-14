@@ -7,6 +7,7 @@
 
 var keywordsCalculator = require('../helpers/keywordsCalculator');
 var dictionaryHelpers = require('../helpers/dictionaryHelpers');
+var waterfall = require('async-waterfall');
 
 module.exports = {
     create: function(req, res){
@@ -40,43 +41,77 @@ module.exports = {
             var new_list = {};
             var items = [];
             //items = list.items;
-            for( let i = 0; i < list.items.length; i++){
-                // ListItem.findOne({id: items[i].id}).populate('voters').exec((err, populatedItem)=> {
-                //     items[i] = populatedItem;
-                //     counter++;
-                    
-                //     if(counter === items.length){
-                //         new_list = { ...list };
-                //         new_list.items = items;
-                //         res.status(200).json(new_list);
-                //     }
-                // });
-                console.log("Item number ", i);
-                ListItem.findOne({id: list.items[i].id}).then((item)=> {
-                                        
-                    var searchParams = {
-                        item_id: item.id,
-                        user_id: user_id
-                    };
-
-                    console.log("Search Params");
-                    console.log(searchParams);
-                    Useritems.findOne(searchParams).then((data) => {
-                        if(data){
-                            item.my_vote = data;
-                            console.log("Vote found");
+            waterfall([function(cb){
+                for( let i = 0; i < list.items.length; i++){
+                    // ListItem.findOne({id: items[i].id}).populate('voters').exec((err, populatedItem)=> {
+                    //     items[i] = populatedItem;
+                    //     counter++;
+                        
+                    //     if(counter === items.length){
+                    //         new_list = { ...list };
+                    //         new_list.items = items;
+                    //         res.status(200).json(new_list);
+                    //     }
+                    // });
+                    console.log("Item number ", i);
+                    ListItem.findOne({id: list.items[i].id}).then((item)=> {
+                                            
+                        var searchParams = {
+                            item_id: item.id,
+                            user_id: user_id
+                        };
+    
+                        console.log("Search Params");
+                        console.log(searchParams);
+                        Useritems.findOne(searchParams).then((data) => {
+                            if(data){
+                                item.my_vote = data;
+                                console.log("Vote found");
+                            }
+                            items.push(item);
+                            counter++;
+                            if(counter === list.items.length){
+                               new_list = { ...list };
+                               new_list.items = items;
+                               console.log("Going to send response");
+                               //res.status(200).json(new_list);
+                               cb();
+                            }
+                        });
+                    })
+                }
+            },
+            function(cb){
+                Dictionary.find().then(function(dictionary){
+                    console.log("Dictionary fetched");
+                    let words_map = { ...list.words_list };
+                    let keys = Object.keys(words_map);
+                    for(let j = 0; j < keys.length; j++){
+                        let found = dictionary.find((item) => {
+                            return item.word === keys[j];
+                        });
+                        if(found){
+                            console.log("Found match in dictionary");
+                            words_map[keys[j]].word_score = found.score * words_map[keys[j]].score;
                         }
-                        items.push(item);
-                        counter++;
-                        if(counter === list.items.length){
-                           new_list = { ...list };
-                           new_list.items = items;
-                           console.log("Going to send response");
-                           res.status(200).json(new_list);
+                        else{
+                            words_map[keys[j]].word_score = 1;
                         }
-                    });
-                })
-            }
+                    }
+                    list.words_list = words_map;
+                    //res.status(200).json(list);
+                    cb();
+                }).catch(function(err){
+                    console.log("Error", err);
+                });
+            }],
+            function(){
+                console.log("final results");
+                console.log(list)
+                res.status(200).json(list);
+            });
+            
+            
         });
         
     }

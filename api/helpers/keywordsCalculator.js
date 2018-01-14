@@ -24,7 +24,7 @@ module.exports = {
         })
         .then(function(item){
             var wordsMap;
-            var merged_content = item.name.concat(" " + item.description).concat(" " + item.url);
+            var merged_content = item.name + ' ' + item.description + ' ' + item.url;
             wordsMap = dictionaryHelper.wordFreq(merged_content);
             cb(wordsMap);
         })
