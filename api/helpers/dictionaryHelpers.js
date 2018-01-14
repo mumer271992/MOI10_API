@@ -9,6 +9,7 @@ module.exports = {
         var words = string.replace(/[.]/g, '').split(/\s/);
         var freqMap = {};
         words.forEach(function(w) {
+            w = w.trim();
             if (!freqMap[w]) {
                 freqMap[w] = {count: 0, score: 0};
             }

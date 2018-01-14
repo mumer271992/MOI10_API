@@ -35,13 +35,16 @@ module.exports = {
         }).populate('items').exec((err, list)=> {
             console.log("List Items length: ", list.items.length);
             if(!list.items.length){
-                res.status(200).json(list);
+                //res.status(200).json(list);
             }
             var counter = 0;
             var new_list = {};
             var items = [];
             //items = list.items;
             waterfall([function(cb){
+                if(!list.items.length){
+                    cb();
+                }
                 for( let i = 0; i < list.items.length; i++){
                     // ListItem.findOne({id: items[i].id}).populate('voters').exec((err, populatedItem)=> {
                     //     items[i] = populatedItem;
