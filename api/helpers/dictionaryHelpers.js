@@ -10,10 +10,12 @@ module.exports = {
         var freqMap = {};
         words.forEach(function(w) {
             w = w.trim();
-            if (!freqMap[w]) {
-                freqMap[w] = {count: 0, score: 0};
+            if(w){
+                if (!freqMap[w]) {
+                    freqMap[w] = {count: 0, score: 0};
+                }
+                freqMap[w].count += 1;
             }
-            freqMap[w].count += 1;
         });
     
         return freqMap;
