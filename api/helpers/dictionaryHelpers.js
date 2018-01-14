@@ -109,27 +109,31 @@ module.exports = {
                     }
                 ],
                 function(result){
-                    console.log("Now Update scores of dictionary words.");
-                    //self.calculateScoresOfMiniDictionary();
-                    Dictionary.find().then(function(dictionary){
-                        console.log("Dictionary length: ", dictionary.length);
-                        let factor = 1;
-                        let minValueWord = _.min(dictionary, function(word){ return word.count; });
-                        let minValueKey = minValueWord.word;
-                        factor = minValueWord.count * 100;
-                        console.log("Min Value factor: ", factor);
-                        Dictionary.native(function(err, dictionary){
-                            if (err) return res.serverError(err);
-                            dictionary.find().forEach(function(item){
-                                let score = factor / item.count;
-                                item.score = score;
-                                dictionary.save(item);
-                            });
-                        });    
-                    }).catch(function(err){
-                        console.log(err);
+                        console.log("Now Update scores of dictionary words.");
+                        //self.calculateScoresOfMiniDictionary();
+                        Dictionary.find().then(function(dictionary){
+                            console.log("Dictionary length: ", dictionary.length);
+                            let scorePerCount = 1;
+                            let maxValueWord = _.max(dictionary, function(word){ return word.count; });
+                            let maxValueKey = maxValueWord.word;
+
+                            scorePerCount = 100 / maxValueWord.count;
+                            console.log("Min Value factor: ", factor);
+                            Dictionary.native(function(err, dictionary){
+                                if (err) return res.serverError(err);
+                                dictionary.find().forEach(function(item){
+                                    let score = item.count * scorePerCount;
+                                    item.score = 100 - score;
+                                    if(item.score < 1){
+                                        item.score = 1;
+                                    }
+                                    dictionary.save(item);
+                                });
+                            });    
+                        }).catch(function(err){
+                            console.log(err);
+                        });
                     });
-                });
                 
             });
         }).catch(function(err){

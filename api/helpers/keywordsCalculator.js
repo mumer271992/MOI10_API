@@ -7,7 +7,9 @@ module.exports = {
         })
         .then(function(list){
             var wordsMap;
-            var merged_content = list.name.concat(" " + list.description);
+            var merged_content = list.name + ' ' + list.description;
+            console.log("Merged Content");
+            console.log(merged_content);
             wordsMap = dictionaryHelper.wordFreq(merged_content);
             wordsMap = dictionaryHelper.calculateScoresOfWords(wordsMap);
             cb(wordsMap);
