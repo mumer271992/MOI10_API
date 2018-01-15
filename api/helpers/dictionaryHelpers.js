@@ -62,7 +62,7 @@ module.exports = {
                 if (err) return res.serverError(err);
                 let bulk = dictionary.initializeUnorderedBulkOp();
                 console.log("Initialized un ordered mongo");
-                console.log(bulk);
+                //console.log(bulk);
                 for(let i = 0; i < keys.length; i++){
                     let found = results.find(function(result){
                         return result.word === keys[i];
@@ -72,6 +72,7 @@ module.exports = {
                         const obj = {
                             word: keys[i],
                             count: wordsMap[keys[i]].count,
+                            rank: 0,
                             score: wordsMap[keys[i]].score
                         };
                         dataArray.push(obj);
@@ -109,6 +110,31 @@ module.exports = {
                         }else{
                             cb();
                         }
+                    },
+                    function(cb) {
+                        Dictionary.find({}).sort("count DESC").exec(function(err, sorted_results){
+                            Dictionary.native(function(err, dictionary){
+                                console.log("Sorted data");
+                                //console.log(sorted_results);
+                                let bulk_query = dictionary.initializeUnorderedBulkOp();
+                                for(let i = 0; i< sorted_results.length; i++){
+                                    console.log(i + 1);
+                                    bulk_query.find({'word': sorted_results[i].word }).update({ $set: { rank: i + 1 }});
+                                    if(i == sorted_results.length - 1){
+                                        console.log(bulk_query);
+                                        if(bulk_query.length > 0){
+                                            bulk_query.execute(function(error){
+                                                if(error){
+                                                    console.log(error);
+                                                }
+                                                console.log("Bulk query executed");
+                                            });
+                                        }
+                                        cb();
+                                    }
+                                }
+                            });
+                        });
                     }
                 ],
                 function(result){
