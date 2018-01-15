@@ -140,25 +140,42 @@ module.exports = {
                 function(result){
                         console.log("Now Update scores of dictionary words.");
                         //self.calculateScoresOfMiniDictionary();
-                        Dictionary.find().then(function(dictionary){
-                            console.log("Dictionary length: ", dictionary.length);
-                            let scorePerCount = 1;
-                            let maxValueWord = _.max(dictionary, function(word){ return word.count; });
-                            let maxValueKey = maxValueWord.word;
-
-                            scorePerCount = 100 / maxValueWord.count;
-                            console.log("Min Value factor: ", scorePerCount);
+                        Dictionary.find().then(function(results){
+                            console.log("Dictionary length: ", results.length);
                             Dictionary.native(function(err, dictionary){
-                                if (err) return res.serverError(err);
-                                dictionary.find().forEach(function(item){
-                                    let score = item.count * scorePerCount;
-                                    item.score = 100 - score;
-                                    if(item.score < 1){
-                                        item.score = 1;
+                                let blk = dictionary.initializeUnorderedBulkOp();
+                                for(let j = 0; j < results.length; j++){
+                                    let score = ( results[j].rank / results.length ) * 100;
+                                    blk.find({'word': results[j].word }).update({ $set: { score: Math.round(score) }});
+                                    if(j == results.length - 1){
+                                        if(blk.length > 0){
+                                            blk.execute(function(error){
+                                                if(error){
+                                                    console.log(error);
+                                                }
+                                                console.log("Bulk query executed and score calculated.");
+                                            });
+                                        }
                                     }
-                                    dictionary.save(item);
-                                });
-                            });    
+                                }
+                            });
+                            // let scorePerCount = 1;
+                            // let maxValueWord = _.max(dictionary, function(word){ return word.count; });
+                            // let maxValueKey = maxValueWord.word;
+
+                            // scorePerCount = 100 / maxValueWord.count;
+                            // console.log("Min Value factor: ", scorePerCount);
+                            // Dictionary.native(function(err, dictionary){
+                            //     if (err) return res.serverError(err);
+                            //     dictionary.find().forEach(function(item){
+                            //         let score = item.count * scorePerCount;
+                            //         item.score = 100 - score;
+                            //         if(item.score < 1){
+                            //             item.score = 1;
+                            //         }
+                            //         dictionary.save(item);
+                            //     });
+                            // });    
                         }).catch(function(err){
                             console.log(err);
                         });
