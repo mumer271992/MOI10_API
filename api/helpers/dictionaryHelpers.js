@@ -146,7 +146,11 @@ module.exports = {
                                 let blk = dictionary.initializeUnorderedBulkOp();
                                 for(let j = 0; j < results.length; j++){
                                     let score = ( results[j].rank / results.length ) * 100;
-                                    blk.find({'word': results[j].word }).update({ $set: { score: Math.round(score) }});
+                                    score = Math.round(score);
+                                    if(score <= 0){
+                                        score = 1;
+                                    }
+                                    blk.find({'word': results[j].word }).update({ $set: { score: score }});
                                     if(j == results.length - 1){
                                         if(blk.length > 0){
                                             blk.execute(function(error){
