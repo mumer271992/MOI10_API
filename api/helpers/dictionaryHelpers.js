@@ -20,23 +20,44 @@ module.exports = {
     
         return freqMap;
     },
+    calculateRankofWords: function(wordsMap) {
+        var ranked_words_list = {};
+        var sorted_keys = Object.keys(wordsMap).sort(function(a, b){
+            return wordsMap[b].count - wordsMap[a].count;
+        });
+        for( let i = 0; i < sorted_keys.length; i++ ){
+            ranked_words_list[sorted_keys[i]] = { ...wordsMap[sorted_keys[i]], rank: i + 1 }
+        }
+        console.log("Ranked words list");
+        console.log(ranked_words_list);
+        return ranked_words_list;
+    },
     // This method is for calculating score for top 20 words list for an i individual list
     calculateScoresOfWords: function(wordsMap){
-        let scorePerCount = 1;
-        let maxValueKey = this.findMaxValueKey(wordsMap);
-        console.log("Max Value: ", maxValueKey);
-        if(wordsMap.hasOwnProperty(maxValueKey)){
-            scorePerCount = 100 / wordsMap[maxValueKey].count;
-        }
-
         let keys = Object.keys(wordsMap);
         for(let i = 0; i < keys.length; i++){
             if(wordsMap.hasOwnProperty(keys[i])){
-                let score = wordsMap[keys[i]].count * scorePerCount;
+                let score = ( wordsMap[keys[i]].rank / keys.length ) * 100; 
                 console.log(`Score for ${keys[i]} is ${score}`);
                 wordsMap[keys[i]].score = score;
             }
         }
+
+        // let scorePerCount = 1;
+        // let maxValueKey = this.findMaxValueKey(wordsMap);
+        // console.log("Max Value: ", maxValueKey);
+        // if(wordsMap.hasOwnProperty(maxValueKey)){
+        //     scorePerCount = 100 / wordsMap[maxValueKey].count;
+        // }
+
+        // let keys = Object.keys(wordsMap);
+        // for(let i = 0; i < keys.length; i++){
+        //     if(wordsMap.hasOwnProperty(keys[i])){
+        //         let score = wordsMap[keys[i]].count * scorePerCount;
+        //         console.log(`Score for ${keys[i]} is ${score}`);
+        //         wordsMap[keys[i]].score = score;
+        //     }
+        // }
 
         return wordsMap;
     },

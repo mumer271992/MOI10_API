@@ -11,6 +11,7 @@ module.exports = {
             console.log("Merged Content");
             console.log(merged_content);
             wordsMap = dictionaryHelper.wordFreq(merged_content);
+            wordsMap = dictionaryHelper.calculateRankofWords(wordsMap);
             wordsMap = dictionaryHelper.calculateScoresOfWords(wordsMap);
             cb(wordsMap);
         })

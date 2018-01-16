@@ -26,6 +26,7 @@ module.exports = {
                             existingWordsMap[keysOfWordsMap[i]].count += wordsMap[keysOfWordsMap[i]].count; 
                         }
                     }
+                    existingWordsMap = dictionaryHelper.calculateRankofWords(existingWordsMap);
                     existingWordsMap = dictionaryHelper.calculateScoresOfWords(existingWordsMap);
                     dictionaryHelper.convertWordsMapToDictionary(wordsMap);
                     list.words_list = existingWordsMap;
