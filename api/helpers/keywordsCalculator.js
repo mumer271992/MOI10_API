@@ -1,6 +1,6 @@
 var dictionaryHelper = require('./dictionaryHelpers');
 
-module.exports = {
+var keywordsCalculator = module.exports = {
     maintainKeywordsListFromList: function(list_id, cb){
         List.findOne({
             id: list_id
@@ -32,5 +32,37 @@ module.exports = {
         .catch(function(err){
             console.log(err);
         });
+    },
+    findReleventLists: function(current_list, lists){
+        var current_words_list_keys = Object.keys(current_list.words_list);
+        var isMatchingList = false;
+        var relevant_lists = [];
+        for(let i = 0; i < lists.length; i++){
+            if(lists[i] && lists[i].words_list){
+                isMatchingList = keywordsCalculator.matchBothLists(current_words_list_keys, Object.keys(lists[i].words_list), 10);
+                if(isMatchingList){
+                    relevant_lists.push(lists[i]);
+                }
+                // if(i == lists.length - 1){
+                //     return relevant_lists;
+                // }
+            }
+        }
+        return relevant_lists;
+    },
+    matchBothLists: function(current_words_lis, target_words_list, matching_criteria){
+        var total_match_found = 0;
+        for(let i = 0; i < current_words_lis.length; i++){
+            var found = target_words_list.find((item)=> {
+                return item === current_words_lis[i];
+            });
+            if(found){  
+                total_match_found++;
+            }
+            if(i >= 19){
+                break;
+            }
+        }
+        return total_match_found >= matching_criteria ? true : false;
     }
 }

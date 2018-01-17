@@ -107,10 +107,23 @@ module.exports = {
                 }).catch(function(err){
                     console.log("Error", err);
                 });
-            }],
+            },
+            function(cb){
+                List.find().then(function(lists){
+                    var releventLists = keywordsCalculator.findReleventLists(list, lists);
+                    console.log("Relevent lists length");
+                    console.log(releventLists.length);
+                    list.relevent_lists = releventLists;
+                    cb();
+                }).catch(function(err){
+                    console.log(err);
+                });
+            }
+            ],
             function(){
                 console.log("final results");
-                console.log(list)
+                //console.log(list);
+                
                 res.status(200).json(list);
             });
             
