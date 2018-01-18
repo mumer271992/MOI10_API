@@ -7,7 +7,7 @@ var keywordsCalculator = module.exports = {
         })
         .then(function(list){
             var wordsMap;
-            var merged_content = list.name + ' ' + list.description;
+            var merged_content = list.name + ' ' + list.name + ' ' + list.name + ' ' + list.description;
             console.log("Merged Content");
             console.log(merged_content);
             wordsMap = dictionaryHelper.wordFreq(merged_content);
@@ -25,7 +25,7 @@ var keywordsCalculator = module.exports = {
         })
         .then(function(item){
             var wordsMap;
-            var merged_content = item.name + ' ' + item.description + ' ' + item.url;
+            var merged_content = item.name + ' ' + item.name + ' ' + item.name + ' ' + item.description + ' ' + item.url;
             wordsMap = dictionaryHelper.wordFreq(merged_content);
             cb(wordsMap);
         })
