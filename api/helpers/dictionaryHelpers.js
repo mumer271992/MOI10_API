@@ -9,6 +9,7 @@ module.exports = {
         var words = string.replace(/[.]/g, '').split(/\s/);
         var freqMap = {};
         words.forEach(function(w) {
+            w = w.replace(/[^a-zA-Z0-9]/g, '');
             w = w.trim();
             if(w){
                 if (!freqMap[w]) {
@@ -37,7 +38,7 @@ module.exports = {
         let keys = Object.keys(wordsMap);
         for(let i = 0; i < keys.length; i++){
             if(wordsMap.hasOwnProperty(keys[i])){
-                let score = ( wordsMap[keys[i]].rank / keys.length ) * 100; 
+                let score = 100 - ( wordsMap[keys[i]].rank / keys.length ) * 100; 
                 console.log(`Score for ${keys[i]} is ${score}`);
                 wordsMap[keys[i]].score = score;
             }
