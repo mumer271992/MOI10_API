@@ -13,9 +13,8 @@ module.exports = {
     create: function(req, res){
         var body = req.body;
         List.create(body).then(function(new_list){
-            //console.log("List is created.");
+
             keywordsCalculator.maintainKeywordsListFromList(new_list.id, function(wordsMap){
-                //console.log("Keywords List is maintained.");
                 new_list.words_list = wordsMap;
                 new_list.save();
                 dictionaryHelpers.convertWordsMapToDictionary(wordsMap);
@@ -33,51 +32,32 @@ module.exports = {
         List.findOne({
             id: req.params.id
         }).populate('items').exec((err, list)=> {
-            //console.log("List Items length: ", list.items.length);
             if(!list.items.length){
                 //res.status(200).json(list);
             }
             var counter = 0;
             var new_list = {};
             var items = [];
-            //items = list.items;
             waterfall([function(cb){
                 if(!list.items.length){
                     cb();
                 }
                 for( let i = 0; i < list.items.length; i++){
-                    // ListItem.findOne({id: items[i].id}).populate('voters').exec((err, populatedItem)=> {
-                    //     items[i] = populatedItem;
-                    //     counter++;
-                        
-                    //     if(counter === items.length){
-                    //         new_list = { ...list };
-                    //         new_list.items = items;
-                    //         res.status(200).json(new_list);
-                    //     }
-                    // });
-                    //console.log("Item number ", i);
                     ListItem.findOne({id: list.items[i].id}).then((item)=> {
                                             
                         var searchParams = {
                             item_id: item.id,
                             user_id: user_id
                         };
-    
-                        //console.log("Search Params");
-                        //console.log(searchParams);
                         Useritems.findOne(searchParams).then((data) => {
                             if(data){
                                 item.my_vote = data;
-                                //console.log("Vote found");
                             }
                             items.push(item);
                             counter++;
                             if(counter === list.items.length){
                                new_list = { ...list };
                                new_list.items = items;
-                               //console.log("Going to send response");
-                               //res.status(200).json(new_list);
                                cb();
                             }
                         });
@@ -94,7 +74,6 @@ module.exports = {
                             return item.word === keys[j];
                         });
                         if(found){
-                            //console.log("Found match in dictionary");
                             words_map[keys[j]].word_score = found.score * words_map[keys[j]].score;
                         }
                         else{
@@ -102,7 +81,6 @@ module.exports = {
                         }
                     }
                     list.words_list = words_map;
-                    //res.status(200).json(list);
                     cb();
                 }).catch(function(err){
                     console.log("Error", err);
@@ -111,8 +89,6 @@ module.exports = {
             function(cb){
                 List.find().then(function(lists){
                     var releventLists = keywordsCalculator.findReleventLists(list, lists);
-                    //console.log("Relevent lists length");
-                    //console.log(releventLists.length);
                     list.relevent_lists = releventLists;
                     cb();
                 }).catch(function(err){
@@ -122,8 +98,6 @@ module.exports = {
             ],
             function(){
                 console.log("final results");
-                //console.log(list);
-                
                 res.status(200).json(list);
             });
             
