@@ -15,11 +15,11 @@ module.exports = {
             bcrypt.genSalt(10, function(err, salt) {
                 bcrypt.hash(user_data.password, salt, function(err, hash) {
                   if(err) {
-                      console.log(err);
-                      cb(err);
+                      //console.log(err);
+                      res.status(500).send({error: err});
                   } else {
                     user_data.password = hash;
-                        console.log(hash);
+                        //console.log(hash);
                         User.create(user_data).then((user)=> {
                             const jwt_token = auth.sign(user.id);
                             delete user.password;
@@ -61,8 +61,8 @@ module.exports = {
         //console.log(body.access_token);
         console.log(facebookHelper);
         facebookHelper.login(body.access_token).then((user_data)=> {
-            console.log("User Data");
-            console.log(user_data);
+            //console.log("User Data");
+            //console.log(user_data);
             if(user_data && user_data.email){
                 User.findOne({
                     $or: [{

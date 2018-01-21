@@ -8,8 +8,8 @@ var keywordsCalculator = module.exports = {
         .then(function(list){
             var wordsMap;
             var merged_content = list.name + ' ' + list.name + ' ' + list.name + ' ' + list.description;
-            console.log("Merged Content");
-            console.log(merged_content);
+            //console.log("Merged Content");
+            //console.log(merged_content);
             wordsMap = dictionaryHelper.wordFreq(merged_content);
             wordsMap = dictionaryHelper.calculateRankofWords(wordsMap);
             wordsMap = dictionaryHelper.calculateScoresOfWords(wordsMap);

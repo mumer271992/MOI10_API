@@ -81,18 +81,18 @@ module.exports = {
                         });
                     }
                     else{
-                        console.log("Item already voted");
+                        //console.log("Item already voted");
                         //res.status(403).send({"error": "Already have voted this item"});
 
                         if(parseInt(user_item.vote) !== (parseInt(req.body.vote))){
-                            console.log("Going to update vote");
+                            //console.log("Going to update vote");
                             if(parseInt(user_item.vote) > parseInt(req.body.vote)){
                                 item.votes = parseInt(item.votes) - 1;
-                                console.log("user_item.vote > req.body.vote: -2", item.votes);
+                                //console.log("user_item.vote > req.body.vote: -2", item.votes);
                             }
                             else if(parseInt(user_item.vote) < parseInt(req.body.vote)){
                                 item.votes = parseInt(item.votes) + 1;
-                                console.log("user_item.vote < req.body.vote: +2", item.votes);
+                                //console.log("user_item.vote < req.body.vote: +2", item.votes);
                             }
                             user_item.vote = req.body.vote;
                             item.save();
@@ -100,14 +100,14 @@ module.exports = {
                             res.status(200).send({"success": true});
                         }
                         else{
-                            console.log("Going to delete vote");
+                            //console.log("Going to delete vote");
                             if(parseInt(user_item.vote) > 0){
                                 item.votes = parseInt(item.votes) - 2;
-                                console.log("user_item.vote > 0: -1", item.votes);
+                                //console.log("user_item.vote > 0: -1", item.votes);
                             }
                             else if(parseInt(user_item.vote) < 0){
                                 item.votes = parseInt(item.votes) + 2;
-                                console.log("user_item.vote < 0: +1", item.votes);
+                                //console.log("user_item.vote < 0: +1", item.votes);
                             }
                             item.save();
                             user_item.destroy();

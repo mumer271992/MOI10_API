@@ -13,9 +13,9 @@ module.exports = {
     create: function(req, res){
         var body = req.body;
         List.create(body).then(function(new_list){
-            console.log("List is created.");
+            //console.log("List is created.");
             keywordsCalculator.maintainKeywordsListFromList(new_list.id, function(wordsMap){
-                console.log("Keywords List is maintained.");
+                //console.log("Keywords List is maintained.");
                 new_list.words_list = wordsMap;
                 new_list.save();
                 dictionaryHelpers.convertWordsMapToDictionary(wordsMap);
@@ -33,7 +33,7 @@ module.exports = {
         List.findOne({
             id: req.params.id
         }).populate('items').exec((err, list)=> {
-            console.log("List Items length: ", list.items.length);
+            //console.log("List Items length: ", list.items.length);
             if(!list.items.length){
                 //res.status(200).json(list);
             }
@@ -56,7 +56,7 @@ module.exports = {
                     //         res.status(200).json(new_list);
                     //     }
                     // });
-                    console.log("Item number ", i);
+                    //console.log("Item number ", i);
                     ListItem.findOne({id: list.items[i].id}).then((item)=> {
                                             
                         var searchParams = {
@@ -64,19 +64,19 @@ module.exports = {
                             user_id: user_id
                         };
     
-                        console.log("Search Params");
-                        console.log(searchParams);
+                        //console.log("Search Params");
+                        //console.log(searchParams);
                         Useritems.findOne(searchParams).then((data) => {
                             if(data){
                                 item.my_vote = data;
-                                console.log("Vote found");
+                                //console.log("Vote found");
                             }
                             items.push(item);
                             counter++;
                             if(counter === list.items.length){
                                new_list = { ...list };
                                new_list.items = items;
-                               console.log("Going to send response");
+                               //console.log("Going to send response");
                                //res.status(200).json(new_list);
                                cb();
                             }
@@ -86,7 +86,7 @@ module.exports = {
             },
             function(cb){
                 Dictionary.find().then(function(dictionary){
-                    console.log("Dictionary fetched");
+                    //console.log("Dictionary fetched");
                     let words_map = { ...list.words_list };
                     let keys = Object.keys(words_map);
                     for(let j = 0; j < keys.length; j++){
@@ -94,7 +94,7 @@ module.exports = {
                             return item.word === keys[j];
                         });
                         if(found){
-                            console.log("Found match in dictionary");
+                            //console.log("Found match in dictionary");
                             words_map[keys[j]].word_score = found.score * words_map[keys[j]].score;
                         }
                         else{
@@ -111,8 +111,8 @@ module.exports = {
             function(cb){
                 List.find().then(function(lists){
                     var releventLists = keywordsCalculator.findReleventLists(list, lists);
-                    console.log("Relevent lists length");
-                    console.log(releventLists.length);
+                    //console.log("Relevent lists length");
+                    //console.log(releventLists.length);
                     list.relevent_lists = releventLists;
                     cb();
                 }).catch(function(err){
