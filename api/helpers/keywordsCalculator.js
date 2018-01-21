@@ -17,6 +17,7 @@ var keywordsCalculator = module.exports = {
         })
         .catch(function(err){
             console.log(err);
+            
         });
     },
     maintainKeywordsListFromListItem: function(item_id, cb){
