@@ -1,4 +1,5 @@
 var facebookHelper = require('../helpers/facebook');
+var bcrypt = require('bcrypt');
 
 module.exports = {
     postSignup: (req, res) => {
@@ -11,13 +12,23 @@ module.exports = {
             if(user){
                 return res.status(403).send({error: "Email already exists"});
             }
-
-            User.create(user_data).then((user)=> {
-                const jwt_token = auth.sign(user.id);
-                delete user.password;
-                return res.json({token: jwt_token, user: user});
-            }).catch((err)=> {
-                res.status(500).send({error: err});
+            bcrypt.genSalt(10, function(err, salt) {
+                bcrypt.hash(user_data.password, salt, function(err, hash) {
+                  if(err) {
+                      console.log(err);
+                      cb(err);
+                  } else {
+                    user_data.password = hash;
+                        console.log(hash);
+                        User.create(user_data).then((user)=> {
+                            const jwt_token = auth.sign(user.id);
+                            delete user.password;
+                            return res.json({token: jwt_token, user: user});
+                        }).catch((err)=> {
+                            res.status(500).send({error: err});
+                        });       
+                  }
+                });
             });
         });
     },
@@ -28,13 +39,21 @@ module.exports = {
                 email: user_data.email
             }]
         }).then((user) => {
-            if(!user || (user.password !== user_data.password)){
-                return res.status(401).send({error: "Invalid credentials"});
+            if(!user){
+                return res.status(401).send({error: "User not found"});
             }
+            // }else if(user.password !== user_data.password){
+            //     return res.status(401).send({error: "Invalid credentials"});
+            // }
 
-            const jwt_token = auth.sign(user.id);
-            delete user.password;
-            return res.json({token: jwt_token, user: user});
+            bcrypt.compare(user_data.password, user.password, function(err, hashResult){
+                if(!hashResult){
+                    return res.status(401).send({error: "Invalid credentials"});
+                }
+                const jwt_token = auth.sign(user.id);
+                delete user.password;
+                return res.json({token: jwt_token, user: user});
+            });
         });
     },
     postFacebookLogin: (req, res) => {

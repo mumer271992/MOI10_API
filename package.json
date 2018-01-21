@@ -6,6 +6,7 @@
   "keywords": [],
   "dependencies": {
     "async-waterfall": "^0.1.5",
+    "bcrypt": "^1.0.3",
     "ejs": "2.3.4",
     "fb": "^2.0.0",
     "grunt": "1.0.1",
