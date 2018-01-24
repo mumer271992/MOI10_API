@@ -34,11 +34,14 @@ var keywordsCalculator = module.exports = {
     },
     findReleventLists: function(current_list, lists){
         var current_words_list_keys = Object.keys(current_list.words_list);
+        var top20_sorted_word = current_words_list_keys.sort((a, b) => {
+            return current_list.words_list[a].word_score < current_list.words_list[b].word_score ? 1 : -1;
+        });
         var isMatchingList = false;
         var relevant_lists = [];
         for(let i = 0; i < lists.length; i++){
             if(lists[i] && lists[i].words_list){
-                isMatchingList = keywordsCalculator.matchBothLists(current_words_list_keys, Object.keys(lists[i].words_list), 10);
+                isMatchingList = keywordsCalculator.matchBothLists(top20_sorted_word, Object.keys(lists[i].words_list), 10);
                 if(isMatchingList){
                     relevant_lists.push(lists[i]);
                 }
