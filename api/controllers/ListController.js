@@ -51,13 +51,16 @@ module.exports = {
                         };
                         Useritems.findOne(searchParams).then((data) => {
                             if(data){
+                                console.log('hthththt');
                                 item.my_vote = data;
                             }
                             items.push(item);
                             counter++;
                             if(counter === list.items.length){
+                                console.log('pass');
                                new_list = { ...list };
                                new_list.items = items;
+                               list = new_list;
                                cb();
                             }
                         });
@@ -66,7 +69,7 @@ module.exports = {
             },
             function(cb){
                 Dictionary.find().then(function(dictionary){
-                    //console.log("Dictionary fetched");
+                    console.log("Dictionary fetched");
                     let words_map = { ...list.words_list };
                     let keys = Object.keys(words_map);
                     for(let j = 0; j < keys.length; j++){
