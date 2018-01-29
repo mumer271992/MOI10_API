@@ -7,21 +7,26 @@
 
 var keywordsCalculator = require('../helpers/keywordsCalculator');
 var dictionaryHelpers = require('../helpers/dictionaryHelpers');
+var slugHelper = require('../helpers/slugHelper');
 var waterfall = require('async-waterfall');
 
 module.exports = {
     create: function(req, res){
         var body = req.body;
-        List.create(body).then(function(new_list){
-
-            keywordsCalculator.maintainKeywordsListFromList(new_list.id, function(wordsMap){
-                new_list.words_list = wordsMap;
-                new_list.save();
-                dictionaryHelpers.convertWordsMapToDictionary(wordsMap);
-                res.status(200).json(new_list);
+        slugHelper.makeSlug(body.name).then(function(slug){
+            body.slug = slug;
+            List.create(body).then(function(new_list){  
+                keywordsCalculator.maintainKeywordsListFromList(new_list.id, function(wordsMap){
+                    new_list.words_list = wordsMap;
+                    new_list.save();
+                    dictionaryHelpers.convertWordsMapToDictionary(wordsMap);
+                    res.status(200).json(new_list);
+                });
+            }).catch(function(err){
+                res.status(500).send({error: err});
             });
         }).catch(function(err){
-            res.status(500).send({error: err});
+            console.log(err)
         });
     },
 	fetch: function(req, res){
@@ -30,7 +35,7 @@ module.exports = {
         var user_id = req.query.user_id;
         //console.log(user_id);
         List.findOne({
-            id: req.params.id
+            slug: req.params.slug
         }).populate('items').exec((err, list)=> {
             if(!list.items.length){
                 //res.status(200).json(list);
