@@ -9,6 +9,7 @@ var keywordsCalculator = require('../helpers/keywordsCalculator');
 var dictionaryHelpers = require('../helpers/dictionaryHelpers');
 var slugHelper = require('../helpers/slugHelper');
 var waterfall = require('async-waterfall');
+var ObjectId = require('mongodb').ObjectID;
 
 module.exports = {
     create: function(req, res){
@@ -112,6 +113,49 @@ module.exports = {
             
         });
         
+    },
+    makeSlug: function (req,res) {
+        let rc = 0;
+        let sc = 0;
+        waterfall([function(cb){
+            List.find().then(function(lists){
+                List.native(function(error, list){
+                    console.log(error);
+                    if (error) return res.serverError(err);
+                    let bulk = list.initializeUnorderedBulkOp();
+                    for(let i = 0; i < lists.length; i++){
+                        
+                        if(!lists[i].slug){
+                            rc++;
+                            slugHelper.makeSlug(lists[i].name).then(function(slg){
+                                sc++;
+                                console.log("Slug: ", slg);
+                                // console.log("Counter: ", counter);
+                                // console.log("List length: ", lists.length);
+                                console.log('Id: ', lists[i].id);
+                                bulk.find({ "_id" : new ObjectId(lists[i].id) }).update({ $set: { slug: slg }});
+                                if(rc === sc){
+                                    if(bulk.length > 0){
+                                        console.log('Going to execute bulk query');
+                                        bulk.execute(function (error) {
+                                            console.log('Bulk query executed');
+                                            if(error){
+                                                console.log(error);
+                                            }
+                                            cb();                  
+                                        });
+                                    }else{
+                                        cb();
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        }, function(cb){
+            res.status(200).json({success: true});
+        }]);
     }
 };
 

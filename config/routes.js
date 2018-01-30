@@ -39,7 +39,8 @@ module.exports.routes = {
   'post /auth/login': 'AuthController.postLogin',
   'post /auth/fblogin': 'AuthController.postFacebookLogin',
   'get /list/fetch/:slug': 'ListController.fetch',
-  'post /vote/:id': 'ListItemController.vote'
+  'post /vote/:id': 'ListItemController.vote',
+  'get /makeSlug': 'ListController.makeSlug'
 
   /***************************************************************************
   *                                                                          *
