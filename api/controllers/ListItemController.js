@@ -59,6 +59,7 @@ module.exports = {
                         Useritems.create({
                             "user_id": req.body.user_id,
                             "item_id": req.body.item_id,
+                            "list_id": req.body.list_id,
                             "vote": req.body.vote
                         }).then((useritem) => {
                             if(useritem && useritem.id){

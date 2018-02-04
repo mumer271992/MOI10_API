@@ -61,6 +61,6 @@ module.exports.policies = {
     create: ['sessionAuth', 'mapOwner'],
     update: ['sessionAuth'],
     destroy: ['sessionAuth'],
-    vote: ['sessionAuth', 'mapOwner']
+    vote: ['sessionAuth', 'mapOwner', 'associatdList']
   }
 };

@@ -10,6 +10,7 @@ var dictionaryHelpers = require('../helpers/dictionaryHelpers');
 var slugHelper = require('../helpers/slugHelper');
 var waterfall = require('async-waterfall');
 var ObjectId = require('mongodb').ObjectID;
+var jwt = require('jsonwebtoken');
 
 module.exports = {
     create: function(req, res){
@@ -38,7 +39,7 @@ module.exports = {
         List.findOne({
             slug: req.params.slug
         }).populate('items').exec((err, list)=> {
-            if(!list.items.length){
+            if(!list || !list.items || !list.items.length){
                 //res.status(200).json(list);
             }
             var counter = 0;
@@ -156,6 +157,139 @@ module.exports = {
         }, function(cb){
             res.status(200).json({success: true});
         }]);
-    }
+    },
+    getFilteredLists: function(req, res){
+        let listsMap = {};
+        let rs;
+        waterfall([function(cb){
+            let lq = List.find();
+            lq.sort({'createdAt' : 'DESC'}).limit(10);
+            lq.exec(function(err, result){
+                if(result){
+                   rs = result;
+                   listsMap.latest = result;
+                   cb();
+                }
+            });
+        },function(cb){
+            Useritems.native(function(err, useritems){
+                useritems.aggregate([
+                    {
+                        $group : {
+                            _id : "$list_id",
+                            count: { $sum: 1 }
+                        }
+                    },
+                    {
+                        $sort: {
+                            "_id.list_id": -1
+                        }
+                    },
+                    { 
+                        "$limit": 10 
+                    }
+                ], function(err, result){
+                    if (err) return res.serverError(err);
+                    let lists_array = [];
+                    for(let k=0; k < result.length;k++){
+                        if(result[k]._id){
+                            lists_array.push(new ObjectId(result[k]._id));
+                        }
+                    }
+                    List.find({
+                        "_id": {
+                            "$in": lists_array
+                        }
+                    }).then(function(lsts){
+                        listsMap.popular = lsts;
+                        cb();
+                    }).catch(function(error){
+                        console.log('Error');
+                        console.log(error);
+                    });
+                });
+            });
+        }, 
+        function(cb){
+            let current_date = new Date();
+            let prev_date = new Date(current_date.getDate() - 7);
+
+            Useritems.native(function(error, uitems){
+                uitems.aggregate([
+                    {
+                        '$match': {
+                            'createdAt': {
+                                $gt: prev_date
+                            }
+                        }
+                    },
+                    {
+                        $group : {
+                            _id : "$list_id",
+                            count: { $sum: 1 }
+                        }
+                    },
+                    {
+                        $sort: {
+                            "_id.list_id": -1
+                        }
+                    },
+                    { 
+                        "$limit": 10 
+                    }
+                ],
+                function(error, rslt){
+                    if (error) return res.serverError(error);
+                    let lists_array = [];
+                    for(let k=0; k < rslt.length;k++){
+                        if(rslt[k]._id){
+                            lists_array.push(new ObjectId(rslt[k]._id));
+                        }
+                    }
+                    List.find({
+                        "_id": {
+                            "$in": lists_array
+                        }
+                    }).then(function(lsts){
+                        listsMap.trending = lsts;
+                        cb();
+                    }).catch(function(error){
+                        console.log('Error');
+                        console.log(error);
+                    });
+                });
+            });
+        },
+        function(cb){
+            const auth_header = req.headers['authorization'];
+            if(auth_header){
+                const auth_header_parts = auth_header.split(' ');
+                if(auth_header_parts.length == 2 && auth_header_parts[0] === 'Basic'){
+                    const user_id = auth.verify(auth_header_parts[1]);
+                    if(user_id){
+                        User.findOne({id: user_id}).then((user)=> {
+                            if(user){
+                                List.find({"user_id": user.id}).sort({'createdAt' : 'DESC'}).limit(10).exec(function(error, lists){
+                                    listsMap.my_lists = lists;
+                                    cb();
+                                })
+                            }
+                        });
+                    }
+                    else {
+                        cb();
+                    }
+                }
+            }
+            else{
+                cb();
+            }
+        },
+        function(cb){
+            res.status(200).json(listsMap);
+        }
+    ]);
+    },
+
 };
 
