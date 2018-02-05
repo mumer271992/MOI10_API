@@ -255,7 +255,11 @@ module.exports = {
                             "$in": lists_array
                         }
                     }).then(function(lsts){
-                        listsMap.trending = lsts;
+                        let order_lists = [];
+                        for(let ll = 0; ll < lists_array.length; ll++){
+                            order_lists.push(lsts.find((item) => item.id == lists_array[ll]));
+                        }
+                        listsMap.trending = order_lists;
                         cb();
                     }).catch(function(error){
                         console.log('Error');
