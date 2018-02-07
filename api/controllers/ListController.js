@@ -157,14 +157,6 @@ module.exports = {
                             }
                         },
                         {
-                            $lookup: {
-                                from: "user",
-                                localField: "_id",
-                                foreignField: "_id",
-                                as: "user"
-                            }
-                        },
-                        {
                             $sort: {
                                 "count": -1
                             }
@@ -173,35 +165,28 @@ module.exports = {
                             "$limit": 10 
                         }
                     ], function(err, result){
-                        // let contributors = [];
-                        // for(let kk = 0; kk < result.length; kk++){
-                        //     contributors = [ ...contributors , ...result[kk].user ];
-                        // }
                         if (err) return res.serverError(err);
-                        list.top_contributors = result;
-                        cb();
-                        // if (err) return res.serverError(err);
-                        // let lists_array = [];
-                        // for(let k=0; k < result.length;k++){
-                        //     if(result[k]._id){
-                        //         lists_array.push(new ObjectId(result[k]._id));
-                        //     }
-                        // }
-                        // List.find({
-                        //     "_id": {
-                        //         "$in": lists_array
-                        //     }
-                        // }).then(function(lsts){
-                        //     let order_lists = [];
-                        //     for(let ll = 0; ll < lists_array.length; ll++){
-                        //         order_lists.push(lsts.find((item) => item.id == lists_array[ll]));
-                        //     }
-                        //     list.top_contributors = order_lists;
-                        //     cb();
-                        // }).catch(function(error){
-                        //     console.log('Error');
-                        //     console.log(error);
-                        // });
+                        let lists_array = [];
+                        for(let k=0; k < result.length;k++){
+                            if(result[k]._id){
+                                lists_array.push(new ObjectId(result[k]._id));
+                            }
+                        }
+                        List.find({
+                            "_id": {
+                                "$in": lists_array
+                            }
+                        }).then(function(lsts){
+                            let order_lists = [];
+                            for(let ll = 0; ll < lists_array.length; ll++){
+                                order_lists.push(lsts.find((item) => item.id == lists_array[ll]));
+                            }
+                            list.top_contributors = order_lists;
+                            cb();
+                        }).catch(function(error){
+                            console.log('Error');
+                            console.log(error);
+                        });
                     });
                 });
             }],
