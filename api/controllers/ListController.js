@@ -172,7 +172,7 @@ module.exports = {
                                 lists_array.push(new ObjectId(result[k]._id));
                             }
                         }
-                        List.find({
+                        User.find({
                             "_id": {
                                 "$in": lists_array
                             }
