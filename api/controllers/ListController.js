@@ -177,6 +177,7 @@ module.exports = {
                         // for(let kk = 0; kk < result.length; kk++){
                         //     contributors = [ ...contributors , ...result[kk].user ];
                         // }
+                        if (err) return res.serverError(err);
                         list.top_contributors = result;
                         cb();
                         // if (err) return res.serverError(err);
