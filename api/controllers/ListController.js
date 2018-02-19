@@ -40,13 +40,15 @@ module.exports = {
             slug: req.params.slug
         }).populate('items').exec((err, list)=> {
             if(!list || !list.items || !list.items.length){
-                //res.status(200).json(list);
+                res.status(200).json(list);
+                return;
             }
             var counter = 0;
             var new_list = {};
             var items = [];
             waterfall([function(cb){
-                if(!list.items.length){
+                console.log(list);
+                if(!list || !list.item || !list.items.length){
                     cb();
                 }
                 for( let i = 0; i < list.items.length; i++){
@@ -100,6 +102,8 @@ module.exports = {
                 List.find().then(function(lists){
                     var releventLists = keywordsCalculator.findReleventLists(list, lists);
                     list.relevent_lists = releventLists;
+                    let rLists = list.relevent_lists.map((item) => ({"id": item.id, "name": item.name, "slug": item.slug}));
+                    list.relevent_lists = rLists;
                     cb();
                 }).catch(function(err){
                     console.log(err);
@@ -140,6 +144,8 @@ module.exports = {
                                 order_lists.push(lsts.find((item) => item.id == lists_array[ll]));
                             }
                             list.popular = order_lists;
+                            let popularLists = list.popular.map((item) => ({"id": item.id, "name": item.name, "slug": item.slug}));
+                            list.popular = popularLists;
                             cb();
                         }).catch(function(error){
                             console.log('Error');
