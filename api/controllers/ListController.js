@@ -246,12 +246,14 @@ module.exports = {
         let listsMap = {};
         let rs;
         waterfall([function(cb){
-            let lq = List.find();
+            let lq = List.find({}, {'select': [ 'id' , 'name', 'slug']});
             lq.sort({'createdAt' : 'DESC'}).limit(10);
             lq.exec(function(err, result){
                 if(result){
                    rs = result;
                    listsMap.latest = result;
+                //    let abc = listsMap.latest.map((item) => ({"id": item.id, "name": item.name, "slug": item.slug}));
+                //    listsMap.latest = abc;
                    cb();
                 }
             });
@@ -290,6 +292,8 @@ module.exports = {
                             order_lists.push(lsts.find((item) => item.id == lists_array[ll]));
                         }
                         listsMap.popular = order_lists;
+                        let popularLists = listsMap.popular.map((item) => ({"id": item.id, "name": item.name, "slug": item.slug}));
+                        listsMap.popular = popularLists;
                         cb();
                     }).catch(function(error){
                         console.log('Error');
@@ -344,6 +348,8 @@ module.exports = {
                             order_lists.push(lsts.find((item) => item.id == lists_array[ll]));
                         }
                         listsMap.trending = order_lists;
+                        let trendingLists = listsMap.trending.map((item) => ({"id": item.id, "name": item.name, "slug": item.slug}));
+                        listsMap.trending = trendingLists;
                         cb();
                     }).catch(function(error){
                         console.log('Error');
@@ -363,6 +369,8 @@ module.exports = {
                             if(user){
                                 List.find({"user_id": user.id}).sort({'createdAt' : 'DESC'}).limit(10).exec(function(error, lists){
                                     listsMap.my_lists = lists;
+                                    let myListsLists = listsMap.my_lists.map((item) => ({"id": item.id, "name": item.name, "slug": item.slug}));
+                                    listsMap.my_lists = myListsLists;
                                     cb();
                                 })
                             }
