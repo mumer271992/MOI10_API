@@ -31,6 +31,22 @@ module.exports = {
             console.log(err)
         });
     },
+    filterTopKeywords: function(wordsMap){
+        let topKeywords = [];
+        //let sortedKeys = [];
+        let keys = Object.keys(wordsMap);
+        let sortedKeys = keys.sort((a, b) => {
+            return wordsMap[a].word_score < wordsMap[b].word_score ? 1 : -1;
+        });
+        if(wordsMap){
+            //let keys = Object.keys(wordsMap);
+            if(sortedKeys.length > 20){
+                sortedKeys = keys.slice(0,20);
+            }
+        }
+        console.log(sortedKeys);
+        return sortedKeys;
+    },
 	fetch: function(req, res){
         // var data;
         
@@ -93,6 +109,18 @@ module.exports = {
                         }
                     }
                     list.words_list = words_map;
+                    let topKeywords = [];
+                    let topKeys = Object.keys(words_map);
+                    let sortedKeys = topKeys.sort((a, b) => {
+                        return words_map[a].word_score < words_map[b].word_score ? 1 : -1;
+                    });
+                    if(words_map){
+                        //let keys = Object.keys(wordsMap);
+                        if(sortedKeys.length > 20){
+                            sortedKeys = keys.slice(0,20);
+                        }
+                    }
+                    list.words_list = sortedKeys;
                     cb();
                 }).catch(function(err){
                     console.log("Error", err);
