@@ -63,30 +63,24 @@ module.exports = {
             var new_list = {};
             var items = [];
             waterfall([function(cb){
-                console.log(list);
-                if(!list || !list.item || !list.items.length){
-                    cb();
-                }
                 for( let i = 0; i < list.items.length; i++){
-                    ListItem.findOne({id: list.items[i].id}).then((item)=> {
-                                            
+                    ListItem.findOne({id: list.items[i].id}).then((item)=> {                 
                         var searchParams = {
                             item_id: item.id,
                             user_id: user_id
                         };
                         Useritems.findOne(searchParams).then((data) => {
                             if(data){
-                                console.log('hthththt');
                                 item.my_vote = data;
                             }
                             items.push(item);
                             counter++;
                             if(counter === list.items.length){
-                                console.log('pass');
-                               new_list = { ...list };
-                               new_list.items = items;
-                               list = new_list;
-                               cb();
+                            new_list = { ...list };
+                            new_list.items = items;
+                            list = new_list;
+                            console.log('second call');
+                            cb();
                             }
                         });
                     })
@@ -114,6 +108,7 @@ module.exports = {
                     let sortedKeys = topKeys.sort((a, b) => {
                         return words_map[a].word_score < words_map[b].word_score ? 1 : -1;
                     });
+                    console.log(sortedKeys);
                     if(words_map){
                         //let keys = Object.keys(wordsMap);
                         if(sortedKeys.length > 20){
@@ -248,10 +243,6 @@ module.exports = {
                             rc++;
                             slugHelper.makeSlug(lists[i].name).then(function(slg){
                                 sc++;
-                                console.log("Slug: ", slg);
-                                // console.log("Counter: ", counter);
-                                // console.log("List length: ", lists.length);
-                                console.log('Id: ', lists[i].id);
                                 bulk.find({ "_id" : new ObjectId(lists[i].id) }).update({ $set: { slug: slg }});
                                 if(rc === sc){
                                     if(bulk.length > 0){
