@@ -127,18 +127,18 @@ module.exports = {
                     list.relevent_lists = releventLists;
                     let rLists = list.relevent_lists.map((item) => ({"id": item.id, "name": item.name, "slug": item.slug}));
                     list.relevent_lists = rLists;
-                    let topKeywords = [];
-                    let topKeys = Object.keys(list.words_list);
-                    let sortedKeys = topKeys.sort((a, b) => {
-                        return list.words_list[a].word_score < list.words_list[b].word_score ? 1 : -1;
-                    });
-                    console.log(sortedKeys);
-                    if(list.words_list){
-                        if(sortedKeys.length > 20){
-                            sortedKeys = keys.slice(0,20);
-                        }
-                    }
-                    list.words_list = sortedKeys;
+                    // let topKeywords = [];
+                    // let topKeys = Object.keys(list.words_list);
+                    // let sortedKeys = topKeys.sort((a, b) => {
+                    //     return list.words_list[a].word_score < list.words_list[b].word_score ? 1 : -1;
+                    // });
+                    // console.log(sortedKeys);
+                    // if(list.words_list){
+                    //     if(sortedKeys.length > 20){
+                    //         sortedKeys = keys.slice(0,20);
+                    //     }
+                    // }
+                    // list.words_list = sortedKeys;
                     cb();
                 }).catch(function(err){
                     console.log(err);
