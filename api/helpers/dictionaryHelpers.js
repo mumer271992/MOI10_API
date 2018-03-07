@@ -136,8 +136,8 @@ module.exports = {
                                 for(let j = 0; j < results.length; j++){
                                     let score = ( results[j].rank / results.length ) * 100;
                                     score = Math.round(score);
-                                    if(score <= 0){
-                                        score = 1;
+                                    if(score <= 50){
+                                        score = 50;
                                     }
                                     blk.find({'word': results[j].word }).update({ $set: { score: score }});
                                     if(j == results.length - 1){
