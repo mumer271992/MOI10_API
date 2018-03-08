@@ -103,6 +103,8 @@ module.exports = {
                         }
                     }
                     list.words_list = words_map;
+                    console.log("Word score calculated");
+                    console.log(words_map);
                     // let topKeywords = [];
                     // let topKeys = Object.keys(words_map);
                     // let sortedKeys = topKeys.sort((a, b) => {
