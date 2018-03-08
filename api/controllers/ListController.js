@@ -104,7 +104,7 @@ module.exports = {
                     }
                     list.words_list = words_map;
                     console.log("Word score calculated");
-                    console.log(words_map);
+                    //console.log(words_map);
                     // let topKeywords = [];
                     // let topKeys = Object.keys(words_map);
                     // let sortedKeys = topKeys.sort((a, b) => {
@@ -134,7 +134,7 @@ module.exports = {
                     let sortedKeys = topKeys.sort((a, b) => {
                         return list.words_list[a].word_score < list.words_list[b].word_score ? 1 : -1;
                     });
-                    console.log(sortedKeys);
+                    //console.log(sortedKeys);
                     if(list.words_list){
                         if(sortedKeys.length > 20){
                             sortedKeys = sortedKeys.slice(0,20);
