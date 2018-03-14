@@ -41,7 +41,8 @@ module.exports.routes = {
   'get /list/fetch/:slug': 'ListController.fetch',
   'post /vote/:id': 'ListItemController.vote',
   'get /makeSlug': 'ListController.makeSlug',
-  'get /getFilteredLists': 'ListController.getFilteredLists'
+  'get /getFilteredLists': 'ListController.getFilteredLists',
+  'get /recalculateDictionaryScore': 'DictionaryController.calculateScore'
 
   /***************************************************************************
   *                                                                          *
