@@ -96,7 +96,7 @@ module.exports = {
                             return item.word === keys[j];
                         });
                         if(found){
-                            words_map[keys[j]].word_score = ( found.score > 15 ? 15 : found.score ) * words_map[keys[j]].score;
+                            words_map[keys[j]].word_score = ( found.score > 25 ? 25 : found.score ) * words_map[keys[j]].score;
                         }
                         else{
                             words_map[keys[j]].word_score = 1;
