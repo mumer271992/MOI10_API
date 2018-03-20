@@ -429,6 +429,22 @@ module.exports = {
         }
     ]);
     },
-
+    getWordScore: function (req, res) {
+        console.log('Getting list word score');
+        var params = req.params;
+        List.findOne({slug: params.slug}).then(function(result){
+            // console.log(result);
+            if(result && result.words_list){
+                var keys = Object.keys(result.words_list);
+                var wordKey = keys.find(function(word_key){
+                    return word_key === params.word;
+                })
+                res.status(200).json({success: true, data: result.words_list[wordKey]})
+            }
+            else {
+                res.status(200).json({success: false});
+            }
+        });
+    }
 };
 

@@ -46,6 +46,17 @@ module.exports = {
         }).catch(function(err){
             console.log(err);
         });
+    },
+    getWordScore: function(req, res) {
+        var params = req.params;
+        Dictionary.findOne({word: params.word}).then(function(result){
+            if(result){
+                res.status(200).json({success: true, data: result});
+            }
+            else{
+                res.status(200).json({success: false, data: null});
+            }
+        })
     }
 };
 

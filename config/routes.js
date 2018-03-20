@@ -42,7 +42,9 @@ module.exports.routes = {
   'post /vote/:id': 'ListItemController.vote',
   'get /makeSlug': 'ListController.makeSlug',
   'get /getFilteredLists': 'ListController.getFilteredLists',
-  'get /recalculateDictionaryScore': 'DictionaryController.calculateScore'
+  'get /recalculateDictionaryScore': 'DictionaryController.calculateScore',
+  'get /getdictionaryscore/:word': 'DictionaryController.getWordScore',
+  'get /getlistwordscore/:slug/:word': 'ListController.getWordScore'
 
   /***************************************************************************
   *                                                                          *
