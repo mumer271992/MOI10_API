@@ -439,7 +439,7 @@ module.exports = {
                 var wordKey = keys.find(function(word_key){
                     return word_key === params.word;
                 })
-                res.status(200).json({success: true, data: result.words_list[wordKey]})
+                res.status(200).json({success: true, data: result.words_list[wordKey], length: keys.length})
             }
             else {
                 res.status(200).json({success: false});
