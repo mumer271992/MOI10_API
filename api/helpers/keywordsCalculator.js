@@ -58,9 +58,10 @@ var keywordsCalculator = module.exports = {
             if(found){  
                 total_match_found++;
             }
-            if(i >= 19){
-                break;
-            }
+            // if(i >= 19){
+            //     break;
+            // }
+            console.log(current_words_lis[i], found ? true : false)
         }
         return total_match_found >= matching_criteria ? true : false;
     }
