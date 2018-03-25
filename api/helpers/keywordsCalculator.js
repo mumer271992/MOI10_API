@@ -34,9 +34,13 @@ var keywordsCalculator = module.exports = {
     },
     findReleventLists: function(current_list, lists){
         var current_words_list_keys = Object.keys(current_list.words_list);
+        // var top20_sorted_word = current_words_list_keys.sort((a, b) => {
+        //     return current_list.words_list[a].word_score < current_list.words_list[b].word_score ? 1 : -1;
+        // });
         var top20_sorted_word = current_words_list_keys.sort((a, b) => {
-            return current_list.words_list[a].word_score < current_list.words_list[b].word_score ? 1 : -1;
+            return current_list.words_list[a].rank > current_list.words_list[b].rank ? 1 : -1;
         });
+        console.log("Top sorted words", top20_sorted_word);
         var isMatchingList = false;
         var relevant_lists = [];
         for(let i = 0; i < lists.length; i++){
@@ -57,11 +61,11 @@ var keywordsCalculator = module.exports = {
             });
             if(found){  
                 total_match_found++;
+                console.log(current_words_lis[i], found ? true : false)
             }
             if(i >= 19){
                 break;
             }
-            console.log(current_words_lis[i], found ? true : false)
         }
         return total_match_found >= matching_criteria ? true : false;
     }

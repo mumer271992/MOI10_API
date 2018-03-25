@@ -44,7 +44,7 @@ module.exports = {
                 sortedKeys = keys.slice(0,20);
             }
         }
-        console.log(sortedKeys);
+        // console.log(sortedKeys);
         return sortedKeys;
     },
 	fetch: function(req, res){
@@ -125,7 +125,7 @@ module.exports = {
             function(cb){
                 List.find().then(function(lists){
                     var releventLists = keywordsCalculator.findReleventLists(list, lists);
-                    console.log('Relevent Lists: ', releventLists);
+                    // console.log('Relevent Lists: ', releventLists);
                     list.relevent_lists = releventLists;
                     let rLists = list.relevent_lists.map((item) => ({"id": item.id, "name": item.name, "slug": item.slug}));
                     list.relevent_lists = rLists;
