@@ -34,11 +34,8 @@ var keywordsCalculator = module.exports = {
     },
     findReleventLists: function(current_list, lists){
         var current_words_list_keys = Object.keys(current_list.words_list);
-        // var top20_sorted_word = current_words_list_keys.sort((a, b) => {
-        //     return current_list.words_list[a].word_score < current_list.words_list[b].word_score ? 1 : -1;
-        // });
         var top20_sorted_word = current_words_list_keys.sort((a, b) => {
-            return current_list.words_list[a].rank > current_list.words_list[b].rank ? 1 : -1;
+            return current_list.words_list[a].word_score < current_list.words_list[b].word_score ? 1 : -1;
         });
         console.log("Top sorted words", top20_sorted_word);
         var isMatchingList = false;
