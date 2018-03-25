@@ -42,7 +42,7 @@ var keywordsCalculator = module.exports = {
         var relevant_lists = [];
         for(let i = 0; i < lists.length; i++){
             if(lists[i] && lists[i].words_list){
-                isMatchingList = keywordsCalculator.matchBothLists(top20_sorted_word, Object.keys(lists[i].words_list), 10);
+                isMatchingList = keywordsCalculator.matchBothLists(top20_sorted_word, Object.keys(lists[i].words_list), 3);
                 if(isMatchingList){
                     relevant_lists.push(lists[i]);
                 }
