@@ -24,7 +24,7 @@ var keywordsCalculator = module.exports = {
         })
         .then(function(item){
             var wordsMap;
-            var merged_content = item.name +  item.description;
+            var merged_content = item.name +  ' ' + item.description;
             wordsMap = dictionaryHelper.wordFreq(merged_content);
             cb(wordsMap);
         })
