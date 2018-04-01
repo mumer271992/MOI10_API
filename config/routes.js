@@ -44,7 +44,8 @@ module.exports.routes = {
   'get /getFilteredLists': 'ListController.getFilteredLists',
   'get /recalculateDictionaryScore': 'DictionaryController.calculateScore',
   'get /getdictionaryscore/:word': 'DictionaryController.getWordScore',
-  'get /getlistwordscore/:slug/:word': 'ListController.getWordScore'
+  'get /getlistwordscore/:slug/:word': 'ListController.getWordScore',
+  'get /recreatewordslist': 'ListController.recreateWordsList'
 
   /***************************************************************************
   *                                                                          *

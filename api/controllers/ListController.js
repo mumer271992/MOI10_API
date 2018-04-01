@@ -11,6 +11,7 @@ var slugHelper = require('../helpers/slugHelper');
 var waterfall = require('async-waterfall');
 var ObjectId = require('mongodb').ObjectID;
 var jwt = require('jsonwebtoken');
+var _ = require('underscore')
 
 module.exports = {
     create: function(req, res){
@@ -446,6 +447,87 @@ module.exports = {
                 res.status(200).json({success: false});
             }
         });
+    },
+    recreateWordsList: function (req, res) {
+        console.log('Re creating words list');
+        waterfall([function(cb){
+            ListItem.native(function(err, listitem){
+                listitem.aggregate([
+                    {
+                        $group : {
+                            _id : "$list_id"
+                        }
+                    }
+                ],
+                function(err, results){
+                    console.log('Grouped List Items: ', results)
+                    var lists_array = _.pluck(results, '_id');
+                    console.log('Array of ids: ', lists_array);
+                    List.find({
+                        "_id": {
+                            "$in": lists_array
+                        }
+                    }).populate('items').exec((err, lists) => {
+                        // console.log(lists)
+                        List.native(function(err, list){
+                            let bulk = list.initializeUnorderedBulkOp();
+                            for(let ls = 0 ;ls < lists.length; ls++){
+                                // TODO: Calculate keywords from list
+                                let merged_content = lists[ls].name + ' ' + lists[ls].description;
+                                wordsMap = dictionaryHelpers.wordFreq(merged_content);
+                                console.log('List keywords calculated: ');
+                                console.log(wordsMap);
+                                wordsMap = dictionaryHelpers.calculateRankofWords(wordsMap);
+                                wordsMap = dictionaryHelpers.calculateScoresOfWords(wordsMap);
+                                // TODO: Calculate keywords from list items
+                                let itemKeywords;
+                                var existingWordsMap;
+                                for(let li = 0; li < lists[ls].items.length; li++){
+                                    let merged_content = lists[ls].items[li].name +  ' ' + lists[ls].items[li].description;
+                                    console.log('item text');
+                                    console.log(merged_content);
+                                    itemKeywords = dictionaryHelpers.wordFreq(merged_content);
+                                    console.log(itemKeywords);
+                                    existingWordsMap = wordsMap;
+                                    var keysOfExistingMap = Object.keys(existingWordsMap);
+                                    var keysOfWordsMap = Object.keys(itemKeywords);
+                                    for(let i = 0; i < keysOfWordsMap.length; i++){
+                                        if(!existingWordsMap.hasOwnProperty(keysOfWordsMap[i])){
+                                            existingWordsMap[keysOfWordsMap[i]] = itemKeywords[keysOfWordsMap[i]];                            
+                                        }
+                                        else{
+                                            existingWordsMap[keysOfWordsMap[i]].count += itemKeywords[keysOfWordsMap[i]].count; 
+                                        }
+                                    }
+                                    console.log('List Items keywords calculated: ');
+                                    console.log(wordsMap);
+                                    existingWordsMap = dictionaryHelpers.calculateRankofWords(existingWordsMap);
+                                    existingWordsMap = dictionaryHelpers.calculateScoresOfWords(existingWordsMap);
+                                }
+
+                                bulk.find({ "_id" : new ObjectId(lists[ls].id) }).update({ $set: { words_list: existingWordsMap }});
+                                if(ls >= lists.length - 1){
+                                    if(bulk.length > 0){
+                                        console.log('Going to execute bulk query');
+                                        bulk.execute(function (error) {
+                                            console.log('Bulk query executed');
+                                            if(error){
+                                                console.log(error);
+                                            }
+                                            cb();                  
+                                        });
+                                    }else{
+                                        cb();
+                                    }
+                                }
+                            }
+                        })                
+                    });
+                })
+            })
+        }, function(cb){
+            res.status(200).json({success: true});
+        }])
     }
 };
 
