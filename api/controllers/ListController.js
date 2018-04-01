@@ -343,7 +343,8 @@ module.exports = {
         }, 
         function(cb){
             let current_date = new Date();
-            let prev_date = new Date(current_date.getDate() - 7);
+            let prev_date = new Date();
+            prev_date.setMonth(current_date.getMonth() - 1);
 
             Useritems.native(function(error, uitems){
                 uitems.aggregate([
